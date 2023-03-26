@@ -22,6 +22,12 @@
 # but instead returns it, leaving it to this module to handle output.
 # Also, a new print_weekly_heading function was added so clearly delineate the
 # output for this and subsequent weeks.
+#
+# Week 3 Assignment
+# =================
+# In the third week, we begin to parse packet capture data using new methods
+# added in the NetworkCheck class. We also tinker a bit with distinctions
+# between private, protected, and member attributes.
 #######################################
 
 # we'll need the numpy package so we can use its array class and functions
@@ -118,3 +124,45 @@ print("\ndescriptive info:")
 week2info = networkCheck.getDescriptiveInfo(cm.mySubList1, cm.mySubList2, cm.mySubList3)
 for key, value in week2info.items():
     print("  {} = {}".format(key, value))
+
+###########################################################
+# Week 3
+###########################################################
+
+print_weekly_heading(3)
+
+# these attempts to directly access the private __message1 attribute should
+# fail since Python mangled its name
+try:
+    message1 = networkCheck.message1
+except AttributeError:
+    print("unable to access message1")
+
+try:
+    message1 = networkCheck.__message1
+except AttributeError:
+    print("unable to access __message1")
+
+# so I'll need to use the accessor
+message1 = networkCheck.getMessage1()
+
+# while I could access the protected attribute, it is frowned on
+# so opting for the accessor there as well
+message2 = networkCheck.getMessage2()
+
+# and this one is public
+message3 = networkCheck.message3
+
+print(f"\nMessage1:{message1:>25}\tMessage2:{message2:>25}\tMessage3:{message3:>25}\n")
+
+print_heading("Packet Data")
+
+# search the packet data for the provided source IP address
+networkCheck.setSourceIPCount(cm.pcap, cm.ip_address)
+source_ip_count = networkCheck.getSourceIPCount()
+print(f"Number of packets with source IP address {cm.ip_address}: {source_ip_count}")
+
+# search the packet data for the provided source port
+networkCheck.setSourcePortCount(cm.pcap, cm.sport)
+source_port_count = networkCheck.getSourcePortCount()
+print(f"Number of UDP packets with source port {cm.sport}: {source_port_count}")

@@ -5,12 +5,86 @@
 #
 # This module contains the NetworkCheck class, which includes some methods to
 # analyze lists and numpy arrays.
+#
+# Week 3:
+#   Added private, protected, and public message attributes.
+#   Added attributes and methods to search pcap files for source IP and port.
 #######################################
 
 import numpy as np
-
+from scapy.utils import rdpcap
+from scapy.layers.l2 import Ether
+from scapy.layers.inet import UDP
 
 class NetworkCheck:
+
+    def __init__(self):
+        self.__ip_count = 0
+        self.__sport_count = 0
+
+        self.__message1 = "Welcome to message 1"
+        self._message2 = "Welcome to message 2"
+        self.message3 = "Welcome to message 3"
+
+    def getMessage1(self):
+        """
+        Returns the private welcome message.
+        """
+        return self.__message1
+
+    def getMessage2(self):
+        """
+        Returns the protected welcome message.
+        """
+        return self._message2
+
+    def getSourcePortCount(self):
+        """
+        Fetches the packet count with source port matches (which is
+        set in setSourcePortCount).
+        :return: the number of matching packets
+        """
+        return self.__sport_count
+
+    def setSourcePortCount(self, pcap, port):
+        """
+        Parses the provided pcap file to count the UDP packets with the
+        provided source port.
+        The count can be retrieved by calling getSourcePortCount().
+        :return: None
+        """
+        count = 0
+
+        packets = rdpcap(pcap)
+        for packet in packets:
+            if packet.haslayer(UDP) and packet[UDP].sport == port:
+                count += 1
+
+        self.__sport_count = count
+
+    def getSourceIPCount(self):
+        """
+        Fetches the packet count with source IP matches (which is
+        set in setSourceIPCount).
+        :return: the number of matching packets
+        """
+        return self.__ip_count
+
+    def setSourceIPCount(self, pcap, ip):
+        """
+        Parses the provided pcap file to count the packets with the provided source IP.
+        The count can be retrieved by calling getSourceIPCount().
+        :return: None
+        """
+        print(f"searching for '{ip}'")
+        count = 0
+
+        packets = rdpcap(pcap)
+        for packet in packets:
+            if packet.haslayer(Ether) and packet[Ether].src == ip:
+                count += 1
+
+        self.__ip_count = count
 
     def convertList2NpArray(self, source) -> np.ndarray:
         """
