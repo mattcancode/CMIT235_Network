@@ -1,9 +1,9 @@
 #######################################
 # Matt Miller
 # CMIT-235-45: Advanced Python
-# March 18, 2023
+# March 26, 2023
 #
-# For now, this module simply contains the input data used for the first
+# Initially, this module simply contains the input data used for the first
 # week's assignment. I'm sure it will become more useful in the week's ahead.
 #######################################
 
@@ -15,3 +15,11 @@ mySubList3 = [[2, 2, 3, 4, 5, 6, 6, 5, 4, 3, 2, 1], [-1, -3, 44, 22, 4, 7, 7, 8,
 sport = 65371  # Specifies the source port of the UDP packet
 pcap = 'cmit235_network_data.pcapng'  # path to the pcapng file
 ip_address = "aa:bb:cc:dd:ee:ff"
+
+# network csv file and column headers (aka features)
+csv_data = 'network_packets.csv'
+feature1 = "Source"
+feature2 = "Destination"
+feature3 = "Protocol"
+feature4 = "Length"
+feature5 = "Info"

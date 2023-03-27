@@ -9,12 +9,18 @@
 # Week 3:
 #   Added private, protected, and public message attributes.
 #   Added attributes and methods to search pcap files for source IP and port.
+#
+# Week 4:
+#   Added overloaded checkCounts methods to scan data in packet file to
+#   collect the distribution of data values for features.
 #######################################
 
 import numpy as np
+import pandas as pd
 from scapy.utils import rdpcap
 from scapy.layers.l2 import Ether
 from scapy.layers.inet import UDP
+from multipledispatch import dispatch
 
 class NetworkCheck:
 
@@ -25,6 +31,32 @@ class NetworkCheck:
         self.__message1 = "Welcome to message 1"
         self._message2 = "Welcome to message 2"
         self.message3 = "Welcome to message 3"
+
+    def __checkCounts(self, csv_data, *features):
+        counts = {}
+
+        df = pd.read_csv(csv_data, sep=',')
+
+        for feature in features:
+            counts[feature] = df[feature].value_counts()
+
+        return counts
+
+    @dispatch(str, str)
+    def checkCounts(self, csv_data, feature):
+        df = pd.read_csv(csv_data, sep=",")
+        return df[feature].value_counts()
+
+    @dispatch(str, str, str, str)
+    def checkCounts(self, csv_data, feature1, feature2, feature3):
+        counts = {}
+
+        df = pd.read_csv(csv_data, sep=',')
+
+        for feature in (feature1, feature2, feature3):
+            counts[feature] = df[feature].value_counts()
+
+        return counts
 
     def getMessage1(self):
         """
