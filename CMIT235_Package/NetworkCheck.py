@@ -1,14 +1,14 @@
 #######################################
 # Matt Miller
 # CMIT-235-45: Advanced Python
-# March 26, 2023
+# March 27, 2023
 #
 # This module contains the NetworkCheck class, which includes some methods to
 # analyze lists and numpy arrays.
 #
 # Week 3:
 #   Added private, protected, and public message attributes.
-#   Added attributes and methods to search pcap files for source IP and port.
+#   Added attributes and methods to search pcap files for source MAC and port.
 #######################################
 
 import numpy as np
