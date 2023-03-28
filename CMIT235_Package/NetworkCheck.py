@@ -1,14 +1,14 @@
 #######################################
 # Matt Miller
 # CMIT-235-45: Advanced Python
-# March 26, 2023
+# March 27, 2023
 #
 # This module contains the NetworkCheck class, which includes some methods to
 # analyze lists and numpy arrays.
 #
 # Week 3:
 #   Added private, protected, and public message attributes.
-#   Added attributes and methods to search pcap files for source IP and port.
+#   Added attributes and methods to search pcap files for source MAC and port.
 #
 # Week 4:
 #   Added overloaded checkCounts methods to scan data in packet file to
@@ -22,10 +22,11 @@ from scapy.layers.l2 import Ether
 from scapy.layers.inet import UDP
 from multipledispatch import dispatch
 
+
 class NetworkCheck:
 
     def __init__(self):
-        self.__ip_count = 0
+        self.__mac_count = 0
         self.__sport_count = 0
 
         self.__message1 = "Welcome to message 1"
@@ -94,29 +95,28 @@ class NetworkCheck:
 
         self.__sport_count = count
 
-    def getSourceIPCount(self):
+    def getSourceMacCount(self):
         """
-        Fetches the packet count with source IP matches (which is
-        set in setSourceIPCount).
+        Fetches the packet count with source MAC matches (which is
+        set in setSourceMacCount).
         :return: the number of matching packets
         """
-        return self.__ip_count
+        return self.__mac_count
 
-    def setSourceIPCount(self, pcap, ip):
+    def setSourceMacCount(self, pcap, mac):
         """
-        Parses the provided pcap file to count the packets with the provided source IP.
-        The count can be retrieved by calling getSourceIPCount().
+        Parses the provided pcap file to count the packets with the provided source MAC.
+        The count can be retrieved by calling getSourceMacCount().
         :return: None
         """
-        print(f"searching for '{ip}'")
         count = 0
 
         packets = rdpcap(pcap)
         for packet in packets:
-            if packet.haslayer(Ether) and packet[Ether].src == ip:
+            if packet.haslayer(Ether) and packet[Ether].src == mac:
                 count += 1
 
-        self.__ip_count = count
+        self.__mac_count = count
 
     def convertList2NpArray(self, source) -> np.ndarray:
         """
