@@ -14,4 +14,4 @@ mySubList3 = [[2, 2, 3, 4, 5, 6, 6, 5, 4, 3, 2, 1], [-1, -3, 44, 22, 4, 7, 7, 8,
 
 sport = 65371  # Specifies the source port of the UDP packet
 pcap = 'cmit235_network_data.pcapng'  # path to the pcapng file
-ip_address = "aa:bb:cc:dd:ee:ff"
+mac_address = "aa:bb:cc:dd:ee:ff"

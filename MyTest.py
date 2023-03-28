@@ -158,9 +158,9 @@ print(f"\nMessage1:{message1:>25}\tMessage2:{message2:>25}\tMessage3:{message3:>
 print_heading("Packet Data")
 
 # search the packet data for the provided source IP address
-networkCheck.setSourceIPCount(cm.pcap, cm.ip_address)
-source_ip_count = networkCheck.getSourceIPCount()
-print(f"Number of packets with source IP address {cm.ip_address}: {source_ip_count}")
+networkCheck.setSourceMacCount(cm.pcap, cm.mac_address)
+source_mac_count = networkCheck.getSourceMacCount()
+print(f"Number of packets with source MAC address {cm.mac_address}: {source_mac_count}")
 
 # search the packet data for the provided source port
 networkCheck.setSourcePortCount(cm.pcap, cm.sport)
