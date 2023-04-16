@@ -1,7 +1,7 @@
 #######################################
 # Matt Miller
 # CMIT-235-45: Advanced Python
-# March 27, 2023
+# April 16, 2023
 #
 # Week 1 Assignment
 # =================
@@ -34,6 +34,13 @@
 # This week adds a NewNetworkCheck that tweaks the metrics analyzed. It also
 # adds some csv-parsing methods to the original NetworkCheck to analyze the
 # distribution of values in various columns (aka features).
+#
+# Week 5 Assignment
+# =================
+# This week adds the AddedNetworkCheck class derived from NewNetworkCheck. It
+# includes a new getPingCount method which is called and printed. To demonstrate
+# inheritance, we also call through to some methods introduced in previous
+# weeks in the parent classes.
 #######################################
 
 # we'll need the numpy package so we can use its array class and functions
@@ -45,6 +52,7 @@ import CMIT235_Package.CMIT235_Tools as cm
 import CMIT235_Package.NetworkCheck as nc
 # and week 4 introduced the NewNetworkCheck module
 from CMIT235_Package.NewNetworkCheck import NewNetworkCheck
+from CMIT235_Package.AddedNetworkCheck import AddedNetworkCheck
 
 
 def print_weekly_heading(week):
@@ -202,3 +210,26 @@ print_heading("Multiple Feature")
 allFeaturesCounts = newNetworkCheck.checkCounts(cm.csv_data, cm.feature1, cm.feature2, cm.feature3)
 for feature, counts in allFeaturesCounts.items():
     print(f"{feature}:\n{counts}\n")
+
+###########################################################
+# Week 5
+###########################################################
+
+print_weekly_heading(5)
+
+week5combined = cm.mySubList1 + cm.mySubList2 + cm.mySubList3
+week5array = newNetworkCheck.convertList2NpArray(week5combined)
+
+print("minimum value =", newNetworkCheck.getMin(week5array))
+print("maximum value =", newNetworkCheck.getMax(week5array))
+print("unique values =", newNetworkCheck.getUniqueValues(week5array))
+
+addedNetworkCheck = AddedNetworkCheck()
+
+pingCount = addedNetworkCheck.getPingCount(cm.pcap)
+print(f"\nNumber of TCP packets with window size 4095: {pingCount}")
+
+addedNetworkCheck.setSourceMacCount(cm.pcap, cm.mac_address)
+print(f"\nNumber of packets with source MAC address {cm.mac_address}: {addedNetworkCheck.getSourceMacCount()}")
+
+print(f"\n{cm.feature3}:\n{addedNetworkCheck.checkCounts(cm.csv_data, cm.feature3)}")
