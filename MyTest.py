@@ -242,6 +242,8 @@ print("descriptive info:")
 
 # we'll use the new class for this week
 newNetworkCheck = NewNetworkCheck()
+if not isinstance(newNetworkCheck, NewNetworkCheck):
+    abort(f"newNetworkCheck should be a NewNetworkCheck but is of type {type(newNetworkCheck)}")
 
 logging.info("created NewNetworkCheck instance")
 
@@ -277,7 +279,7 @@ print("unique values =", newNetworkCheck.getUniqueValues(week5array))
 
 addedNetworkCheck = AddedNetworkCheck()
 if not isinstance(addedNetworkCheck, AddedNetworkCheck):
-    abort(f"networkCheck should be a NetworkCheck but is of type {type(addedNetworkCheck)}")
+    abort(f"addedNetworkCheck should be a AddedNetworkCheck but is of type {type(addedNetworkCheck)}")
 
 logging.info("created AddedNetworkCheck instance")
 
