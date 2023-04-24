@@ -41,8 +41,14 @@
 # includes a new getPingCount method which is called and printed. To demonstrate
 # inheritance, we also call through to some methods introduced in previous
 # weeks in the parent classes.
+#
+# Week 6 Assignment
+# =================
+# This week introduces logging and some additional error/exception handling.
 #######################################
 
+import sys
+import logging
 # we'll need the numpy package so we can use its array class and functions
 import numpy as np
 # for now, there isn't much in this package, but we need to import the tools
@@ -53,6 +59,18 @@ import CMIT235_Package.NetworkCheck as nc
 # and week 4 introduced the NewNetworkCheck module
 from CMIT235_Package.NewNetworkCheck import NewNetworkCheck
 from CMIT235_Package.AddedNetworkCheck import AddedNetworkCheck
+
+
+logging.basicConfig(filename="CMIT235_Network.log", level=logging.DEBUG)
+
+logging.info("starting MyTest ...")
+
+
+def abort(message, exit_code=1):
+    """Prints and logs and error message then exits. Exits with code 1 unless overridden by caller."""
+    logging.error(message)
+    print(f"\nERROR - {message} - ABORTING")
+    sys.exit(exit_code)
 
 
 def print_weekly_heading(week):
@@ -113,7 +131,11 @@ print_weekly_heading(1)
 # some analysis (there several ways to combine these lists - I briefly used
 # list comprehension to do it, but simple concatenation seems to be the much
 # less cumbersome and more readable)
-analyze_combined(cm.mySubList1 + cm.mySubList2 + cm.mySubList3)
+combined_list = cm.mySubList1 + cm.mySubList2 + cm.mySubList3
+if not isinstance(combined_list, list):
+    abort(f"combined_list should be a list but is of type {type(combined_list)}")
+
+analyze_combined(combined_list)
 
 # next we'll do some slightly different analysis on the individual sublists
 # after first converting them to numpy arrays
@@ -125,19 +147,34 @@ for sublist in (cm.mySubList1, cm.mySubList2, cm.mySubList3):
 ###########################################################
 
 networkCheck = nc.NetworkCheck()
+if not isinstance(networkCheck, nc.NetworkCheck):
+    abort(f"networkCheck should be a NetworkCheck but is of type {type(networkCheck)}")
+
+logging.info("created NetworkCheck instance")
 
 week2combined = cm.mySubList1 + cm.mySubList2 + cm.mySubList3
 week2array = networkCheck.convertList2NpArray(week2combined)
 
 print_weekly_heading(2)
 
-print("minimum value =", networkCheck.getMin(week2array))
-print("maximum value =", networkCheck.getMax(week2array))
+week2min = networkCheck.getMin(week2array)
+if week2min < -100:
+    raise RuntimeError(f"invalid min {week2min} - should be at least -100")
+
+week2max = networkCheck.getMax(week2array)
+if week2max > 100:
+    raise RuntimeError(f"invalid max {week2max} - should be no more than 100")
+
+print("minimum value =", week2min)
+print("maximum value =", week2max)
 print("unique values =", networkCheck.getUniqueValues(week2array))
 
 print("\ndescriptive info:")
 
 week2info = networkCheck.getDescriptiveInfo(cm.mySubList1, cm.mySubList2, cm.mySubList3)
+if not isinstance(week2info, dict):
+    abort(f"week2info should be a dict but is of type {type(week2info)}")
+
 for key, value in week2info.items():
     print("  {} = {}".format(key, value))
 
@@ -174,13 +211,25 @@ print(f"\nMessage1:{message1:>25}\tMessage2:{message2:>25}\tMessage3:{message3:>
 print_heading("Packet Data")
 
 # search the packet data for the provided source IP address
-networkCheck.setSourceMacCount(cm.pcap, cm.mac_address)
+try:
+    networkCheck.setSourceMacCount(cm.pcap, cm.mac_address)
+except Exception as e:
+    abort(f"unable to parse {cm.pcap}: {e}")
+
 source_mac_count = networkCheck.getSourceMacCount()
+if not isinstance(source_mac_count, int):
+    abort(f"source mac count should be an int but is of type {type(source_mac_count)}")
 print(f"Number of packets with source MAC address {cm.mac_address}: {source_mac_count}")
 
 # search the packet data for the provided source port
-networkCheck.setSourcePortCount(cm.pcap, cm.sport)
+try:
+    networkCheck.setSourcePortCount(cm.pcap, cm.sport)
+except Exception as e:
+    abort(f"unable to parse {cm.pcap}: {e}")
+
 source_port_count = networkCheck.getSourcePortCount()
+if not isinstance(source_port_count, int):
+    abort(f"source port count should be an int but is of type {type(source_port_count)}")
 print(f"Number of UDP packets with source port {cm.sport}: {source_port_count}")
 
 ###########################################################
@@ -193,6 +242,8 @@ print("descriptive info:")
 
 # we'll use the new class for this week
 newNetworkCheck = NewNetworkCheck()
+
+logging.info("created NewNetworkCheck instance")
 
 # this will invoke the overridden getDescriptiveInfo method
 week4info = newNetworkCheck.getDescriptiveInfo(cm.mySubList1, cm.mySubList2, cm.mySubList3)
@@ -225,8 +276,14 @@ print("maximum value =", newNetworkCheck.getMax(week5array))
 print("unique values =", newNetworkCheck.getUniqueValues(week5array))
 
 addedNetworkCheck = AddedNetworkCheck()
+if not isinstance(addedNetworkCheck, AddedNetworkCheck):
+    abort(f"networkCheck should be a NetworkCheck but is of type {type(addedNetworkCheck)}")
+
+logging.info("created AddedNetworkCheck instance")
 
 pingCount = addedNetworkCheck.getPingCount(cm.pcap)
+if not isinstance(pingCount, int):
+    abort(f"ping count should be an int but is of type {type(pingCount)}")
 print(f"\nNumber of TCP packets with window size 4095: {pingCount}")
 
 addedNetworkCheck.setSourceMacCount(cm.pcap, cm.mac_address)
