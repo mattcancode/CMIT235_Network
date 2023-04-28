@@ -1,7 +1,7 @@
 #######################################
 # Matt Miller
 # CMIT-235-45: Advanced Python
-# April 23, 2023
+# April 28, 2023
 #
 # Week 1 Assignment
 # =================
@@ -45,6 +45,11 @@
 # Week 6 Assignment
 # =================
 # This week introduces logging and some additional error/exception handling.
+#
+# Week 7 Assignment
+# =================
+# In this week, we tinker a bit with some final advanced features like super(),
+# anonymous functions, recursion, and function variables.
 #######################################
 
 import sys
@@ -57,6 +62,7 @@ import CMIT235_Package.CMIT235_Tools as cm
 # and, in week 2, we start using the new NetworkCheck module
 import CMIT235_Package.NetworkCheck as nc
 # and week 4 introduced the NewNetworkCheck module
+from CMIT235_Package.NetworkCheck import NetworkCheck
 from CMIT235_Package.NewNetworkCheck import NewNetworkCheck
 from CMIT235_Package.AddedNetworkCheck import AddedNetworkCheck
 
@@ -292,3 +298,59 @@ addedNetworkCheck.setSourceMacCount(cm.pcap, cm.mac_address)
 print(f"\nNumber of packets with source MAC address {cm.mac_address}: {addedNetworkCheck.getSourceMacCount()}")
 
 print(f"\n{cm.feature3}:\n{addedNetworkCheck.checkCounts(cm.csv_data, cm.feature3)}")
+
+###########################################################
+# Week 7
+###########################################################
+
+# I really don't like this next part for a number of reasons:
+# 1. raising exceptions in an anonymous function is an antipattern and kind of
+#    tricky as shown below (replacing that whole second line with 1/0 to
+#    trigger a ZeroDivisionError looks cleaner, but even more sketchy)
+# 2. as a result, it's very cumbersome, which seems to defeat the purpose of
+#    the usually concise anonymous functions
+# 3. PEP 8: E731 discourages the creation of named anonymous functions at all
+#    (since naming them is inconsistent with "anonymous")
+# In a real world scenario, I would definitely opt for a regular function. With
+# that lengthy caveat, this function checks that the child is a subclass of the
+# parent and throws a TypeError if it is not.
+
+check_inheritance = lambda child, parent: issubclass(child, parent) or\
+        (_ for _ in ()).throw(TypeError(parent.__name__ + " is not a parent of " + child.__name__))
+
+
+def repeat(alist):
+    """walks through list recursively rather than with iterator"""
+    length = len(alist)
+    if length == 1:
+        print("list item value:", alist[0])
+    elif length > 0:
+        half = length // 2
+        repeat(alist[:half])
+        repeat(alist[half:])
+
+
+print_weekly_heading(7)
+
+print_heading("calling parent method from NewNetworkCheck")
+newNetworkCheck.callSuper(cm.mySubList2)
+
+print_heading("checking NewNetworkCheck subclassing via (inexplicably) anonymous function")
+try:
+    if check_inheritance(NewNetworkCheck, NetworkCheck):
+        print("NewNetworkCheck is a subclass of NetworkCheck")
+except TypeError as e:
+    abort(str(e))
+
+print_heading("calling grandparent method from AddedNetworkCheck")
+addedNetworkCheck.callGrandparent(cm.mySubList3)
+
+print_heading("checking AddedNetworkCheck subclassing via (inexplicably) anonymous function")
+try:
+    if check_inheritance(AddedNetworkCheck, NetworkCheck):
+        print("AddedNetworkCheck is a subclass of NetworkCheck")
+except TypeError as e:
+    abort(str(e))
+
+print_heading("walk through list recursively")
+repeat(cm.mySubList1[0])

@@ -1,11 +1,13 @@
 #######################################
 # Matt Miller
 # CMIT-235-45: Advanced Python
-# March 26, 2023
+# April 28, 2023
 #
 # This module contains the NewNetworkCheck class, which derives from the
 # NetworkCheck class but overrides the getDescriptiveInfo method to return
 # different metrics about the passed lists.
+#
+# In week 7, we add a callSuper() method to call a method in a parent class.
 #######################################
 
 import numpy as np
@@ -49,3 +51,17 @@ class NewNetworkCheck(NetworkCheck):
 
         # done - return the information
         return info
+
+    def callSuper(self, alist):
+        """
+        Calls the parent class's getMin() method and prints the result.
+        :param alist: the list
+        :return: nothing (it would make sense to return the result of getMin()
+        but that was not part of the assignment specification)
+        """
+        # it seems a little unnecessary use super() to make this call since
+        # this class does not define an overriding getMin() method so simply
+        # calling getMin() directly would have the same effect, but the whole
+        # point of this particular change was to use super()
+        minimum = super().getMin(self.convertList2NpArray(alist))
+        print(f"in NewNetworkCheck.callSuper - minimum is {minimum}")
